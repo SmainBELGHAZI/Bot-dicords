@@ -67,7 +67,7 @@ Comme dit précédemment le Bot sera équipé de 5 commandes principales qui son
 
 
 
-# <p align="center">Basse de données 💾 </p>
+# <p align="center">Base de données 💾 </p>
   
 Ce projet m'a amené à créer une base de données j'ai décidé de me tourner vers postgres pour  la confectionner
 voici les différents schémas de la base :
