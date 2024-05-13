@@ -89,7 +89,7 @@ voici les différents schémas de la base :
 - Diagramme de sequence 
 
 
-![alt text](https://imagizer.imageshack.com/v2/1023x563q90/r/922/1OJuge.png](https://imagizer.imageshack.com/v2/308x325q70/r/922/xY0mG7.jpg)
+![alt text](https://imagizer.imageshack.com/v2/308x325q70/r/922/xY0mG7.jpg)
 
                 
         
