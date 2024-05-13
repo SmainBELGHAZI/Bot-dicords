@@ -86,17 +86,12 @@ voici les différents schémas de la base :
 
 ![alt text](https://imagizer.imageshack.com/v2/576x325q70/r/922/46ZiI3.png)
 
-- Diagramme de sequence slash commande
+- Diagramme de sequence 
 
 
-![alt text](https://imagizer.imageshack.com/v2/1023x563q90/r/922/1OJuge.png)
+![alt text](https://imagizer.imageshack.com/v2/1023x563q90/r/922/1OJuge.png](https://imagizer.imageshack.com/v2/308x325q70/r/922/xY0mG7.jpg)
 
-- Diagramme sequence enregistrement de message
-
-
-![alt text](https://imagizer.imageshack.com/v2/720x275q70/r/924/XYsbZr.png)
-        
-        
+                
         
 
 ## 🛠️ Install Dependencies    
