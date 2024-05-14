@@ -14,7 +14,7 @@ Le projet a été réalisé en python 🐍
   
 - Pycharm ;
 - API discord ;
-- Basse de données.    
+- Base de données.    
     
 
 
