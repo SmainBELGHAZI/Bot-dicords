@@ -44,7 +44,7 @@ Comme dit précédemment le bot sera équipé de 7 commandes principales qui son
 
 
 
-- /talk_to_much : utiliser cette commande en précisant l'ID du channel, le bot vous précisera l'user qui a envoyé le plus de message ainsi que le nombre de messages qu'il a envoyé
+- /talk_to_much : utiliser cette commande en précisant l'ID du channel, le bot vous précisera l'user qui aura envoyé le plus de message ainsi que le nombre de messages qu'il aura envoyé
 
 
 
