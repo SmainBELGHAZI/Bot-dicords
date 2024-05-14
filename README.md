@@ -74,7 +74,7 @@ Comme dit précédemment le bot sera équipé de 7 commandes principales qui son
 
 # <p align="center">Base de données 💾 </p>
   
-Pour créer la base de données nécessaire à la réalisation du projet, j'ai décidé de me tourner vers postgres. 
+Pour créer la base de données nécessaire à la réalisation du projet, j'ai décidé de me tourner vers Postgres. 
 
 Vous trouverez, ci-après, les différents schémas de la base :
 
