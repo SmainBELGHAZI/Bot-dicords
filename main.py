@@ -1,12 +1,8 @@
 import discord
 import os
-
 from discord import app_commands
-
 from discord.ext import commands
 import psycopg2
-
-import secret
 
 intents = discord.Intents.default()
 intents.guilds = True
@@ -14,22 +10,17 @@ intents.message_content = True
 intents.members = True
 intents = discord.Intents.all()
 
-
 #connexion à la base de donnèes 
 con = psycopg2.connect(  #connexion BDDos.environ['database']
      database=os.environ['database'], user=os.environ['user'], password=os.environ['password'], host=os.environ['host'], port=os.environ['port']
  )
 #ouverteure du curseur qui permet d'executer les requêtes sql
 
-
 bot = commands.Bot(command_prefix='/', intents=intents)
 client = discord.Client(intents=intents)
 tree = app_commands.CommandTree(client)
 intents = discord.Intents.all()
 intents.members=True
-
-
-
 
 
 @bot.event #à chaque message enregistre le message dans la base de données et si l'user le canal ou le serveur est inconnus l'inclus dans la BDD aussi
@@ -134,14 +125,12 @@ async def on_message(message):
  print(boolserv)
  print(boolcanal)
 
-
-
 @bot.tree.command(name= "hey",description="reponse au hey", guild=discord.Object(id=os.environ['id']))
 async def hey_slash(interaction : discord.Interaction):
  await interaction.response.send_message("Hey <3")
  
 @bot.tree.command(name="showmessage",description="montre les dernier message user",guild=discord.Object(id=os.environ['id']))
-async def hey_showmessage(interaction : discord.Interaction,user_name:str,number_of_message :int ):
+async def hey_showmessage(interaction : discord.Interaction,user_name: discord.Member,number_of_message :int ):
 
     con.commit()
    # await interaction.response.send_message("From User :"+ interaction.user.name)
@@ -155,13 +144,13 @@ async def hey_showmessage(interaction : discord.Interaction,user_name:str,number
 
     cursor2 = con.cursor()
 
-    cursor2.execute(sql3, (user_name,))  # Fournir les valeurs des paramètres sous forme de tuple
+    cursor2.execute(sql3, (str(user_name),))  # Fournir les valeurs des paramètres sous forme de tuple
     show = cursor2.fetchall()
-    cursor2.execute(sql4, (user_name,))
+    cursor2.execute(sql4, (str(user_name),))
     show1 =cursor2.fetchall()
-    cursor2.execute(sql5, (user_name,))
+    cursor2.execute(sql5, (str(user_name),))
     show2 =cursor2.fetchall()
-    cursor2.execute(sql6, (user_name,))
+    cursor2.execute(sql6, (str(user_name),))
     show3 =cursor2.fetchall()
 
 
@@ -187,7 +176,7 @@ async def hey_showmessage(interaction : discord.Interaction,user_name:str,number
         x += 1
 
     if max != 5 :
-     await interaction.response.send_message("From User :" + user_name + "\n".join(
+     await interaction.response.send_message("From User :" + str(user_name) + "\n".join(
         [f" \n-----------------\n message {count}  {heure}  {date} : {msg} " for count,heure,date ,msg in
          zip(listcompteur,listheure,listdate,listmess)]))
 
@@ -195,8 +184,6 @@ async def hey_showmessage(interaction : discord.Interaction,user_name:str,number
     print(listcompteur)
     print(listheure)
     print(listdate)
-
-
 @bot.tree.command(name="show_message_channel", description="montre les dernier message d'un channel",   guild=discord.Object(id=os.environ['id']))
 async def hey_showmessage_channel(interaction: discord.Interaction, id_channel:str, number_of_message:int):
 
@@ -222,8 +209,10 @@ async def hey_showmessage_channel(interaction: discord.Interaction, id_channel:s
 
     x4 = 0
     max2 = 0
+
     if number_of_message > 5:
-        await interaction.response.send_message("Désolé, la demande est limitée à 5 messages maximum.")
+        await interaction.response.send_message("Désolé, la demande est limitée à 5 messages maximum.",)
+
         max2 = 5
     else:
 
@@ -244,8 +233,6 @@ async def hey_showmessage_channel(interaction: discord.Interaction, id_channel:s
      await interaction.response.send_message( "\n".join(
             [f" -----------------\n  {name}  {heure}  {date} : {msg} " for name, heure, date, msg in
              zip(listname1, listheure1, listdate1, listmess1)]))
-
-
 
 @bot.tree.command(name="talk_to_much", description="montre le user qui parle le plus dans le channel",   guild=discord.Object(id=os.environ['id']))
 async def hey_showmessage_channel(interaction: discord.Interaction, id_channel:str):
@@ -285,6 +272,59 @@ async def slash_command2(interaction : discord.Interaction):
 
 
 
+@bot.tree.command(name="compare_messages", description="Compare le nombre de messages envoyés entre deux utilisateurs", guild=discord.Object(id=os.environ['id']))
+async def compare_messages(interaction: discord.Interaction, member1: discord.Member, member2: discord.Member):
+    con.commit()
+
+    sql_count_messages = "SELECT COUNT(*) FROM messages WHERE name = %s"
+    cursor = con.cursor()
+
+    cursor.execute(sql_count_messages, (member1.name,))
+    count_member1 = cursor.fetchone()[0]
+
+    cursor.execute(sql_count_messages, (member2.name,))
+    count_member2 = cursor.fetchone()[0]
+
+    if count_member1 > count_member2:
+        await interaction.response.send_message(f"{member1.display_name} a envoyé plus de messages que {member2.display_name} !")
+    elif count_member1 < count_member2:
+        await interaction.response.send_message(f"{member2.display_name} a envoyé plus de messages que {member1.display_name} !")
+    else:
+        await interaction.response.send_message(f"{member1.display_name} et {member2.display_name} ont envoyé le même nombre de messages !")
+
+
+import datetime
+
+@bot.tree.command(name="messages_between_dates", description="Affiche tous les messages dans un intervalle de dates spécifié", guild=discord.Object(id=os.environ['id']))
+async def messages_between_dates(interaction: discord.Interaction, start_date: str, end_date: str):
+    con.commit()
+
+    try:
+        start_date = datetime.datetime.strptime(start_date, "%Y-%m-%d").date()
+        end_date = datetime.datetime.strptime(end_date, "%Y-%m-%d").date()
+    except ValueError:
+        await interaction.response.send_message("Format de date incorrect. Utilisez le format YYYY-MM-DD.")
+        return
+
+    sql_select_messages = "SELECT name, corp, compteur, heure, date FROM messages WHERE date BETWEEN %s AND %s ORDER BY compteur ASC"
+    cursor = con.cursor()
+
+    cursor.execute(sql_select_messages, (start_date, end_date))
+    messages = cursor.fetchall()
+
+    if not messages:
+        await interaction.response.send_message("Aucun message trouvé dans l'intervalle de dates spécifié.")
+        return
+
+    # Création du contenu du fichier texte
+    file_content = "\n".join([f"From User: {name}\nMessage {count} - {heure} {date}: {msg}" for name, msg, count, heure, date in messages])
+
+    # Création et envoi du fichier texte
+    with open("messages_between_dates.txt", "w", encoding="utf-8") as file:
+        file.write(file_content)
+
+    with open("messages_between_dates.txt", "rb") as file:
+        await interaction.response.send_message("Voici le fichier texte contenant les messages:", file=discord.File(file, "messages_between_dates.txt"))
 @bot.event
 async def on_ready():
     print('Ready!')
@@ -297,14 +337,6 @@ async def on_ready():
     except Exception as e:
         print(e)
 
-
-
-
-# Lecture du token depuis le fichier
-
-
-
-# Récupérer le token à partir de la variable d'environnement
 
 # Utilisation du token
 bot.run(os.environ['key'])
